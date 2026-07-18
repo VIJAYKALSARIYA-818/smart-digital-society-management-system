@@ -1,3 +1,4 @@
+console.log("APP FILE LOADED");
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
@@ -16,7 +17,28 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+console.log("Loading auth routes...");
+console.log(authRoutes);
+
+// Debug middleware
+app.use("/api/auth", (req, res, next) => {
+  console.log("AUTH REQUEST:", req.method, req.originalUrl);
+  next();
+});
+
+// Mount auth routes ONLY ONCE
 app.use("/api/auth", authRoutes);
+
+console.log("=== Registered Auth Routes ===");
+
+authRoutes.stack.forEach((layer) => {
+  if (layer.route) {
+    console.log(
+      Object.keys(layer.route.methods).join(",").toUpperCase(),
+      layer.route.path
+    );
+  }
+});
 
 app.use((req, res) => {
   res.status(404).json({
