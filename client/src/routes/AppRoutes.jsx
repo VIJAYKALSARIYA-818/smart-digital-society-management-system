@@ -9,6 +9,8 @@ import { ROUTES } from "@/constants/routes";
 const Home = lazy(() => import("@/pages/Home/Home"));
 const Login = lazy(() => import("@/pages/Login/Login"));
 const Register = lazy(() => import("@/pages/Register/Register"));
+const ForgotPassword = lazy(() => import("@/pages/ForgotPassword/ForgotPassword"));
+const ResetPassword = lazy(() => import("@/pages/ResetPassword/ResetPassword"));
 const Dashboard = lazy(() => import("@/pages/Dashboard/Dashboard"));
 const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
 
@@ -23,6 +25,8 @@ const AppRoutes = () => {
         <Route element={<AuthLayout />}>
           <Route path={ROUTES.LOGIN} element={<Login />} />
           <Route path={ROUTES.REGISTER} element={<Register />} />
+          <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
+          <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
         </Route>
 
         <Route element={<DashboardLayout />}>
