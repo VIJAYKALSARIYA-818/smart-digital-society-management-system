@@ -1,20 +1,30 @@
+import { useState } from "react";
 import {
   HiOutlineArrowRightOnRectangle,
   HiOutlineBars3,
   HiOutlineBell,
   HiOutlineBuildingOffice2,
 } from "react-icons/hi2";
+import useAuth from "@/hooks/useAuth";
+import { getUserInitials } from "@/utils/userHelpers";
 
 const appName =
   import.meta.env.VITE_APP_NAME || "Smart Digital Society Management System";
 
-const MOCK_USER = {
-  name: "Admin User",
-  role: "Society Admin",
-  initials: "AU",
-};
-
 const Navbar = ({ onMenuToggle }) => {
+  const { user, logout } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
@@ -38,7 +48,7 @@ const Navbar = ({ onMenuToggle }) => {
                 {appName}
               </h1>
               <p className="hidden text-xs text-slate-500 sm:block">
-                Admin Dashboard
+                {user?.role || "Dashboard"}
               </p>
             </div>
           </div>
@@ -62,23 +72,27 @@ const Navbar = ({ onMenuToggle }) => {
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700"
               aria-hidden
             >
-              {MOCK_USER.initials}
+              {getUserInitials(user?.fullName)}
             </div>
 
             <div className="hidden min-w-0 md:block">
               <p className="truncate text-sm font-medium text-slate-900">
-                {MOCK_USER.name}
+                {user?.fullName}
               </p>
-              <p className="truncate text-xs text-slate-500">{MOCK_USER.role}</p>
+              <p className="truncate text-xs text-slate-500">{user?.role}</p>
             </div>
           </div>
 
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <HiOutlineArrowRightOnRectangle className="h-4 w-4" aria-hidden />
-            <span className="hidden sm:inline">Logout</span>
+            <span className="hidden sm:inline">
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </span>
           </button>
         </div>
       </div>

@@ -1,10 +1,13 @@
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { AuthProvider } from "@/context/AuthContext";
 import AppRoutes from "@/routes/AppRoutes";
 
 const App = () => {
   return (
     <ErrorBoundary>
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </ErrorBoundary>
   );
 };

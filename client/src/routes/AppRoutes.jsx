@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loading from "@/components/common/Loading";
+import ProtectedRoute from "@/components/common/ProtectedRoute";
 import AuthLayout from "@/components/layout/AuthLayout";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import MainLayout from "@/components/layout/MainLayout";
@@ -29,8 +30,10 @@ const AppRoutes = () => {
           <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
         </Route>
 
-        <Route element={<DashboardLayout />}>
-          <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<DashboardLayout />}>
+            <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<NotFound />} />
