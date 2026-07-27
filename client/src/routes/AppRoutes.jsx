@@ -13,6 +13,10 @@ const Register = lazy(() => import("@/pages/Register/Register"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword/ResetPassword"));
 const Dashboard = lazy(() => import("@/pages/Dashboard/Dashboard"));
+const Residents = lazy(() => import("@/pages/Residents/Residents"));
+const AddResident = lazy(() => import("@/pages/Residents/AddResident"));
+const EditResident = lazy(() => import("@/pages/Residents/EditResident"));
+const ResidentDetails = lazy(() => import("@/pages/Residents/ResidentDetails"));
 const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
 
 const AppRoutes = () => {
@@ -33,6 +37,10 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
             <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+            <Route path={ROUTES.RESIDENTS} element={<Residents />} />
+            <Route path={ROUTES.RESIDENTS_NEW} element={<AddResident />} />
+            <Route path={ROUTES.RESIDENTS_DETAILS} element={<ResidentDetails />} />
+            <Route path={ROUTES.RESIDENTS_EDIT} element={<EditResident />} />
           </Route>
         </Route>
 

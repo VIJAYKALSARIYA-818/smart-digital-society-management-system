@@ -1,0 +1,66 @@
+import { formatResidentDate, getResidentInitials } from "@/utils/residentHelpers";
+
+const ResidentCard = ({ resident, actions }) => {
+	return (
+		<article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+			<div className="flex items-start gap-3">
+				<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
+					{getResidentInitials(resident.fullName)}
+				</div>
+
+				<div className="min-w-0 flex-1">
+					<div className="flex flex-wrap items-start justify-between gap-2">
+						<div>
+							<h3 className="text-sm font-semibold text-slate-900">{resident.fullName}</h3>
+							<p className="text-xs text-slate-500">Flat {resident.flatNumber}</p>
+						</div>
+
+						<span
+							className={[
+								"rounded-full px-2.5 py-1 text-[11px] font-medium",
+								resident.isActive
+									? "bg-emerald-50 text-emerald-700"
+									: "bg-slate-100 text-slate-600",
+							].join(" ")}
+						>
+							{resident.isActive ? "Active" : "Inactive"}
+						</span>
+					</div>
+
+					<dl className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
+						<div>
+							<dt className="text-xs uppercase tracking-wide text-slate-400">Email</dt>
+							<dd className="mt-0.5 text-slate-700">{resident.email}</dd>
+						</div>
+						<div>
+							<dt className="text-xs uppercase tracking-wide text-slate-400">Phone</dt>
+							<dd className="mt-0.5 text-slate-700">{resident.phone}</dd>
+						</div>
+						<div>
+							<dt className="text-xs uppercase tracking-wide text-slate-400">Block</dt>
+							<dd className="mt-0.5 text-slate-700">{resident.block || "-"}</dd>
+						</div>
+						<div>
+							<dt className="text-xs uppercase tracking-wide text-slate-400">Resident Type</dt>
+							<dd className="mt-0.5 text-slate-700">{resident.residentType}</dd>
+						</div>
+						<div>
+							<dt className="text-xs uppercase tracking-wide text-slate-400">Move-in Date</dt>
+							  <dd className="mt-0.5 text-slate-700">{formatResidentDate(resident.moveInDate)}</dd>
+						</div>
+					</dl>
+
+					{resident.notes ? (
+						<p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-600">
+							{resident.notes}
+						</p>
+					) : null}
+
+					{actions ? <div className="mt-4 flex flex-wrap gap-2">{actions}</div> : null}
+				</div>
+			</div>
+		</article>
+	);
+};
+
+export default ResidentCard;
