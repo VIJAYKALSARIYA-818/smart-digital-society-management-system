@@ -195,7 +195,10 @@ const Residents = () => {
 
 			<DeleteModal
 				isOpen={Boolean(residentToDelete)}
-				resident={residentToDelete}
+				entityLabel="resident"
+				entityName={residentToDelete?.fullName}
+				title="Delete resident"
+				description={`This will permanently delete ${residentToDelete?.fullName || "this resident"} from the system.`}
 				isDeleting={isDeleting}
 				onCancel={() => setResidentToDelete(null)}
 				onConfirm={confirmDeleteResident}

@@ -6,7 +6,10 @@ const SearchBar = ({
 	onChange,
 	onSubmit,
 	onClear,
+	label = "Search residents",
 	placeholder = "Search residents by name, email, phone, flat, or block",
+	submitLabel = "Search",
+	clearLabel = "Clear",
 	isSearching = false,
 }) => {
 	const handleSubmit = (event) => {
@@ -22,7 +25,7 @@ const SearchBar = ({
 			<div className="flex flex-col gap-3 md:flex-row md:items-end">
 				<div className="flex-1">
 					<Input
-						label="Search residents"
+						label={label}
 						name="search"
 						type="search"
 						placeholder={placeholder}
@@ -33,10 +36,10 @@ const SearchBar = ({
 
 				<div className="flex gap-2 md:self-end">
 					<Button type="submit" disabled={isSearching}>
-						{isSearching ? "Searching..." : "Search"}
+						{isSearching ? `${submitLabel}ing...` : submitLabel}
 					</Button>
 					<Button type="button" variant="outline" onClick={onClear} disabled={!value || isSearching}>
-						Clear
+						{clearLabel}
 					</Button>
 				</div>
 			</div>

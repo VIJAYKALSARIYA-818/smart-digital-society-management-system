@@ -105,7 +105,10 @@ const ResidentDetails = () => {
 
 			<DeleteModal
 				isOpen={Boolean(deleteTarget)}
-				resident={deleteTarget}
+				entityLabel="resident"
+				entityName={deleteTarget?.fullName}
+				title="Delete resident"
+				description={`This will permanently delete ${deleteTarget?.fullName || "this resident"} from the system.`}
 				isDeleting={isDeleting}
 				onCancel={() => setDeleteTarget(null)}
 				onConfirm={handleDelete}
