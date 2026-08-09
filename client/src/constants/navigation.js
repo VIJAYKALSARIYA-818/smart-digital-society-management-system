@@ -11,8 +11,9 @@ export const SIDEBAR_NAV_ITEMS = [
   { label: "Complaints", path: ROUTES.COMPLAINTS },
   { label: "Maintenance", path: ROUTES.MAINTENANCE },
   { label: "Parking", path: ROUTES.PARKING },
-  { label: "Package Tracking", path: ROUTES.PACKAGE_TRACKING },
   { label: "Amenities", path: ROUTES.AMENITIES },
+  { label: "Bookings", path: ROUTES.BOOKINGS },
+  { label: "Package Tracking", path: ROUTES.PACKAGE_TRACKING },
   { label: "Notice Board", path: ROUTES.NOTICE_BOARD },
   { label: "Settings", path: ROUTES.SETTINGS },
 ];

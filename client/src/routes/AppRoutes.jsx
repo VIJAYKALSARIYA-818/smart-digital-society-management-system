@@ -33,12 +33,30 @@ const Notices = lazy(() => import("@/pages/Notices/Notices"));
 const AddNotice = lazy(() => import("@/pages/Notices/AddNotice"));
 const EditNotice = lazy(() => import("@/pages/Notices/EditNotice"));
 const NoticeDetails = lazy(() => import("@/pages/Notices/NoticeDetails"));
+const Parking = lazy(() => import("@/pages/Parking/Parking"));
+const AddParking = lazy(() => import("@/pages/Parking/AddParking"));
+const EditParking = lazy(() => import("@/pages/Parking/EditParking"));
+const ParkingDetails = lazy(() => import("@/pages/Parking/ParkingDetails"));
+const Amenities = lazy(() => import("@/pages/Amenities/Amenities"));
+const AddAmenity = lazy(() => import("@/pages/Amenities/AddAmenity"));
+const EditAmenity = lazy(() => import("@/pages/Amenities/EditAmenity"));
+const AmenityDetails = lazy(() => import("@/pages/Amenities/AmenityDetails"));
+const Bookings = lazy(() => import("@/pages/Bookings/Bookings"));
+const AddBooking = lazy(() => import("@/pages/Bookings/AddBooking"));
+const EditBooking = lazy(() => import("@/pages/Bookings/EditBooking"));
+const BookingDetails = lazy(() => import("@/pages/Bookings/BookingDetails"));
+const PackageTracking = lazy(() => import("@/pages/PackageTracking/PackageTracking"));
+const AddPackage = lazy(() => import("@/pages/PackageTracking/AddPackage"));
+const EditPackage = lazy(() => import("@/pages/PackageTracking/EditPackage"));
+const PackageDetails = lazy(() => import("@/pages/PackageTracking/PackageDetails"));
 const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
+
 
 const AppRoutes = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
+
         <Route element={<MainLayout />}>
           <Route path={ROUTES.HOME} element={<Home />} />
         </Route>
@@ -73,6 +91,22 @@ const AppRoutes = () => {
             <Route path={ROUTES.NOTICES_NEW} element={<AddNotice />} />
             <Route path={ROUTES.NOTICES_DETAILS} element={<NoticeDetails />} />
             <Route path={ROUTES.NOTICES_EDIT} element={<EditNotice />} />
+            <Route path={ROUTES.PARKING} element={<Parking />} />
+            <Route path={ROUTES.PARKING_NEW} element={<AddParking />} />
+            <Route path={ROUTES.PARKING_DETAILS} element={<ParkingDetails />} />
+            <Route path={ROUTES.PARKING_EDIT} element={<EditParking />} />
+            <Route path={ROUTES.AMENITIES} element={<Amenities />} />
+            <Route path={ROUTES.AMENITIES_NEW} element={<AddAmenity />} />
+            <Route path={ROUTES.AMENITIES_DETAILS} element={<AmenityDetails />} />
+            <Route path={ROUTES.AMENITIES_EDIT} element={<EditAmenity />} />
+            <Route path={ROUTES.BOOKINGS} element={<Bookings />} />
+            <Route path={ROUTES.BOOKINGS_NEW} element={<AddBooking />} />
+            <Route path={ROUTES.BOOKINGS_DETAILS} element={<BookingDetails />} />
+            <Route path={ROUTES.BOOKINGS_EDIT} element={<EditBooking />} />
+            <Route path={ROUTES.PACKAGE_TRACKING} element={<PackageTracking />} />
+            <Route path={ROUTES.PACKAGE_TRACKING_NEW} element={<AddPackage />} />
+            <Route path={ROUTES.PACKAGE_TRACKING_DETAILS} element={<PackageDetails />} />
+            <Route path={ROUTES.PACKAGE_TRACKING_EDIT} element={<EditPackage />} />
           </Route>
         </Route>
 
