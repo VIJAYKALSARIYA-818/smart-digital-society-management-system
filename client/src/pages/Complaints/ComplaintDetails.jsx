@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import FormAlert from "@/components/common/FormAlert";
 import Button from "@/components/ui/Button";
 import DeleteModal from "@/components/residents/DeleteModal";
@@ -17,7 +17,7 @@ const ComplaintDetails = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const loadComplaint = async () => {
+  const loadComplaint = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -29,11 +29,11 @@ const ComplaintDetails = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [complaintId]);
 
   useEffect(() => {
     loadComplaint();
-  }, [complaintId]);
+  }, [loadComplaint]);
 
   const handleDelete = async () => {
     if (!deleteTarget) return;

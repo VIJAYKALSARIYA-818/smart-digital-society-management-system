@@ -41,5 +41,6 @@ export const ROUTES = {
   PACKAGE_TRACKING_NEW: "/package-tracking/new",
   PACKAGE_TRACKING_DETAILS: "/package-tracking/:packageId",
   PACKAGE_TRACKING_EDIT: "/package-tracking/:packageId/edit",
+  ADMIN_SETTINGS: "/admin-settings",
   SETTINGS: "/settings",
 };

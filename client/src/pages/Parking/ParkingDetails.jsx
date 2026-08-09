@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import FormAlert from "@/components/common/FormAlert";
 import Button from "@/components/ui/Button";
 import { ROUTES } from "@/constants/routes";
 import { fetchParkingSlot } from "@/services/parkingService";

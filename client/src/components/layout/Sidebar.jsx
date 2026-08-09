@@ -14,6 +14,7 @@ import {
   HiOutlineXMark,
 } from "react-icons/hi2";
 import { SIDEBAR_NAV_ITEMS } from "@/constants/navigation";
+import useAuth from "@/hooks/useAuth";
 
 const NAV_ICONS = {
   Dashboard: HiOutlineChartBarSquare,
@@ -25,6 +26,7 @@ const NAV_ICONS = {
   "Package Tracking": HiOutlineCube,
   Amenities: HiOutlineSparkles,
   "Notice Board": HiOutlineClipboardDocumentList,
+  "Admin Settings": HiOutlineCog6Tooth,
   Settings: HiOutlineCog6Tooth,
 };
 
@@ -40,6 +42,13 @@ const navLinkClass = ({ isActive }) =>
   ].join(" ");
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Society Admin";
+
+  const filteredNavItems = SIDEBAR_NAV_ITEMS.filter(
+    (item) => !item.adminOnly || isAdmin
+  );
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -89,7 +98,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             Main Menu
           </p>
           <ul className="space-y-1">
-            {SIDEBAR_NAV_ITEMS.map((item) => {
+            {filteredNavItems.map((item) => {
               const Icon = NAV_ICONS[item.label];
 
               return (

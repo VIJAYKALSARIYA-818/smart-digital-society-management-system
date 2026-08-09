@@ -22,7 +22,6 @@ const Notices = () => {
   const [searchValue, setSearchValue] = useState(searchParams.get("search") || "");
   const [noticeToDelete, setNoticeToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isToggling, setIsToggling] = useState(false);
 
   const parsedPage = Number.parseInt(searchParams.get("page") || "1", 10);
   const currentPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
@@ -114,7 +113,6 @@ const Notices = () => {
   };
 
   const handleTogglePublish = async (notice) => {
-    setIsToggling(true);
     setError(null);
 
     try {
@@ -127,8 +125,6 @@ const Notices = () => {
       await loadNotices();
     } catch (toggleError) {
       setError(getApiError(toggleError));
-    } finally {
-      setIsToggling(false);
     }
   };
 

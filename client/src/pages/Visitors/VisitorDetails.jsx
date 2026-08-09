@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import FormAlert from "@/components/common/FormAlert";
 import Button from "@/components/ui/Button";
 import DeleteModal from "@/components/residents/DeleteModal";
@@ -23,7 +23,7 @@ const VisitorDetails = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
-  const loadVisitor = async () => {
+  const loadVisitor = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -35,11 +35,11 @@ const VisitorDetails = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [visitorId]);
 
   useEffect(() => {
     loadVisitor();
-  }, [visitorId]);
+  }, [visitorId, loadVisitor]);
 
   const handleDelete = async () => {
     if (!deleteTarget) {

@@ -1,5 +1,4 @@
 import { HiPencil, HiTrash, HiEye } from "react-icons/hi2";
-import { formatDistanceToNow } from "date-fns";
 
 const formatVehicleType = (type) => {
   const typeMap = {

@@ -11,14 +11,6 @@ import { fetchAmenities } from "@/services/amenityService";
 import { fetchResidents } from "@/services/residentService";
 import { getApiError } from "@/utils/apiError";
 
-const BOOKING_STATUSES = [
-  { value: "Pending", label: "Pending" },
-  { value: "Confirmed", label: "Confirmed" },
-  { value: "Cancelled", label: "Cancelled" },
-  { value: "Completed", label: "Completed" },
-  { value: "Rejected", label: "Rejected" },
-];
-
 const AddBooking = () => {
   const navigate = useNavigate();
 

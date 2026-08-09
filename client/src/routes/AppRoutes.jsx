@@ -49,6 +49,7 @@ const PackageTracking = lazy(() => import("@/pages/PackageTracking/PackageTracki
 const AddPackage = lazy(() => import("@/pages/PackageTracking/AddPackage"));
 const EditPackage = lazy(() => import("@/pages/PackageTracking/EditPackage"));
 const PackageDetails = lazy(() => import("@/pages/PackageTracking/PackageDetails"));
+const AdminSettings = lazy(() => import("@/pages/AdminSettings/AdminSettings"));
 const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
 
 
@@ -107,6 +108,7 @@ const AppRoutes = () => {
             <Route path={ROUTES.PACKAGE_TRACKING_NEW} element={<AddPackage />} />
             <Route path={ROUTES.PACKAGE_TRACKING_DETAILS} element={<PackageDetails />} />
             <Route path={ROUTES.PACKAGE_TRACKING_EDIT} element={<EditPackage />} />
+            <Route path={ROUTES.ADMIN_SETTINGS} element={<AdminSettings />} />
           </Route>
         </Route>
 

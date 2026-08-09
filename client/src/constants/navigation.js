@@ -15,5 +15,6 @@ export const SIDEBAR_NAV_ITEMS = [
   { label: "Bookings", path: ROUTES.BOOKINGS },
   { label: "Package Tracking", path: ROUTES.PACKAGE_TRACKING },
   { label: "Notice Board", path: ROUTES.NOTICE_BOARD },
+  { label: "Admin Settings", path: ROUTES.ADMIN_SETTINGS, adminOnly: true },
   { label: "Settings", path: ROUTES.SETTINGS },
 ];

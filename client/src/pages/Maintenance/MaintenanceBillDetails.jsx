@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Button from "@/components/ui/Button";
 import DeleteModal from "@/components/residents/DeleteModal";
 import FormAlert from "@/components/common/FormAlert";
