@@ -11,6 +11,9 @@ const noticeRoutes = require("./routes/noticeRoutes");
 const amenityRoutes = require("./routes/amenityRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const packageRoutes = require("./routes/packageRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
 
 const app = express();
 
@@ -35,6 +38,9 @@ app.use("/api/notices", noticeRoutes);
 app.use("/api/amenities", amenityRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/packages", packageRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/settings", settingsRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
