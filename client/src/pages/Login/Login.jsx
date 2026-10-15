@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { FaGoogle } from "react-icons/fa";
 import FormAlert from "@/components/common/FormAlert";
 import Button from "@/components/ui/Button";
 import FormCard from "@/components/ui/FormCard";
@@ -10,9 +10,23 @@ import { ROUTES } from "@/constants/routes";
 import useAuth from "@/hooks/useAuth";
 
 const Login = () => {
-  const { login, getApiError } = useAuth();
+  const { login, logout, user, isAuthenticated, getApiError } = useAuth();
+  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState({ message: "", errors: [] });
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // Handle OAuth error from redirect
+  useEffect(() => {
+    if (location.state?.error) {
+      setError({ message: location.state.error, errors: [] });
+    }
+  }, [location.state]);
+
+  const handleSwitchAccount = async () => {
+    setError({ message: "", errors: [] });
+    await logout();
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -31,6 +45,11 @@ const Login = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    setIsGoogleLoading(true);
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000/api'}/auth/google`;
   };
 
   return (
@@ -53,6 +72,21 @@ const Login = () => {
         {(error.message || error.errors.length > 0) && (
           <FormAlert message={error.message} errors={error.errors} />
         )}
+
+        {isAuthenticated && user ? (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <p>
+              Currently signed in as <strong>{user.fullName}</strong> ({user.role}).
+            </p>
+            <button
+              type="button"
+              onClick={handleSwitchAccount}
+              className="mt-2 font-medium text-indigo-600 hover:text-indigo-700"
+            >
+              Sign out to switch account
+            </button>
+          </div>
+        ) : null}
 
         <Input
           label="Email"
@@ -109,12 +143,16 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Button type="button" variant="social" icon={FaGoogle} fullWidth disabled={isSubmitting}>
-            Google
-          </Button>
-          <Button type="button" variant="social" icon={FaGithub} fullWidth disabled={isSubmitting}>
-            GitHub
+        <div className="grid grid-cols-1 gap-3">
+          <Button 
+            type="button" 
+            variant="social" 
+            icon={FaGoogle} 
+            fullWidth 
+            disabled={isSubmitting || isGoogleLoading}
+            onClick={handleGoogleLogin}
+          >
+            {isGoogleLoading ? 'Connecting...' : 'Continue with Google'}
           </Button>
         </div>
       </form>

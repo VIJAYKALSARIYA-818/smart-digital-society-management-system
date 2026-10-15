@@ -6,11 +6,13 @@ const {
   listBookings,
   updateBooking,
 } = require("../controllers/bookingController");
-const { protect } = require("../middleware/authMiddleware");
+const { MODULE_ACCESS } = require("../constants/roles");
+const { protect, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 router.use(protect);
+router.use(authorize(...MODULE_ACCESS.bookings));
 
 router.get("/", listBookings);
 router.post("/", createBooking);

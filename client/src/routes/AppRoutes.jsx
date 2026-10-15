@@ -2,9 +2,11 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loading from "@/components/common/Loading";
 import ProtectedRoute from "@/components/common/ProtectedRoute";
+import RoleRoute from "@/components/common/RoleRoute";
 import AuthLayout from "@/components/layout/AuthLayout";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import MainLayout from "@/components/layout/MainLayout";
+import { MODULE_ACCESS } from "@/constants/roles";
 import { ROUTES } from "@/constants/routes";
 
 const Home = lazy(() => import("@/pages/Home/Home"));
@@ -12,6 +14,7 @@ const Login = lazy(() => import("@/pages/Login/Login"));
 const Register = lazy(() => import("@/pages/Register/Register"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword/ResetPassword"));
+
 const Dashboard = lazy(() => import("@/pages/Dashboard/Dashboard"));
 const Residents = lazy(() => import("@/pages/Residents/Residents"));
 const AddResident = lazy(() => import("@/pages/Residents/AddResident"));
@@ -50,14 +53,13 @@ const AddPackage = lazy(() => import("@/pages/PackageTracking/AddPackage"));
 const EditPackage = lazy(() => import("@/pages/PackageTracking/EditPackage"));
 const PackageDetails = lazy(() => import("@/pages/PackageTracking/PackageDetails"));
 const AdminSettings = lazy(() => import("@/pages/AdminSettings/AdminSettings"));
+const OAuthCallback = lazy(() => import("@/pages/OAuthCallback/OAuthCallback"));
 const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
-
 
 const AppRoutes = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-
         <Route element={<MainLayout />}>
           <Route path={ROUTES.HOME} element={<Home />} />
         </Route>
@@ -66,49 +68,83 @@ const AppRoutes = () => {
           <Route path={ROUTES.LOGIN} element={<Login />} />
           <Route path={ROUTES.REGISTER} element={<Register />} />
           <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
-          <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Route>
+
+        <Route path="/oauth/callback" element={<OAuthCallback />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
-            <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
-            <Route path={ROUTES.RESIDENTS} element={<Residents />} />
-            <Route path={ROUTES.RESIDENTS_NEW} element={<AddResident />} />
-            <Route path={ROUTES.RESIDENTS_DETAILS} element={<ResidentDetails />} />
-            <Route path={ROUTES.RESIDENTS_EDIT} element={<EditResident />} />
-            <Route path={ROUTES.VISITORS} element={<Visitors />} />
-            <Route path={ROUTES.VISITORS_NEW} element={<AddVisitor />} />
-            <Route path={ROUTES.VISITORS_DETAILS} element={<VisitorDetails />} />
-            <Route path={ROUTES.VISITORS_EDIT} element={<EditVisitor />} />
-            <Route path={ROUTES.COMPLAINTS} element={<Complaints />} />
-            <Route path={ROUTES.COMPLAINTS_NEW} element={<AddComplaint />} />
-            <Route path={ROUTES.COMPLAINTS_DETAILS} element={<ComplaintDetails />} />
-            <Route path={ROUTES.COMPLAINTS_EDIT} element={<EditComplaint />} />
-            <Route path={ROUTES.MAINTENANCE} element={<MaintenanceBills />} />
-            <Route path={ROUTES.MAINTENANCE_NEW} element={<AddMaintenanceBill />} />
-            <Route path={ROUTES.MAINTENANCE_DETAILS} element={<MaintenanceBillDetails />} />
-            <Route path={ROUTES.MAINTENANCE_EDIT} element={<EditMaintenanceBill />} />
-            <Route path={ROUTES.NOTICE_BOARD} element={<Notices />} />
-            <Route path={ROUTES.NOTICES_NEW} element={<AddNotice />} />
-            <Route path={ROUTES.NOTICES_DETAILS} element={<NoticeDetails />} />
-            <Route path={ROUTES.NOTICES_EDIT} element={<EditNotice />} />
-            <Route path={ROUTES.PARKING} element={<Parking />} />
-            <Route path={ROUTES.PARKING_NEW} element={<AddParking />} />
-            <Route path={ROUTES.PARKING_DETAILS} element={<ParkingDetails />} />
-            <Route path={ROUTES.PARKING_EDIT} element={<EditParking />} />
-            <Route path={ROUTES.AMENITIES} element={<Amenities />} />
-            <Route path={ROUTES.AMENITIES_NEW} element={<AddAmenity />} />
-            <Route path={ROUTES.AMENITIES_DETAILS} element={<AmenityDetails />} />
-            <Route path={ROUTES.AMENITIES_EDIT} element={<EditAmenity />} />
-            <Route path={ROUTES.BOOKINGS} element={<Bookings />} />
-            <Route path={ROUTES.BOOKINGS_NEW} element={<AddBooking />} />
-            <Route path={ROUTES.BOOKINGS_DETAILS} element={<BookingDetails />} />
-            <Route path={ROUTES.BOOKINGS_EDIT} element={<EditBooking />} />
-            <Route path={ROUTES.PACKAGE_TRACKING} element={<PackageTracking />} />
-            <Route path={ROUTES.PACKAGE_TRACKING_NEW} element={<AddPackage />} />
-            <Route path={ROUTES.PACKAGE_TRACKING_DETAILS} element={<PackageDetails />} />
-            <Route path={ROUTES.PACKAGE_TRACKING_EDIT} element={<EditPackage />} />
-            <Route path={ROUTES.ADMIN_SETTINGS} element={<AdminSettings />} />
+            <Route element={<RoleRoute roles={MODULE_ACCESS.dashboard} />}>
+              <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.residents} />}>
+              <Route path={ROUTES.RESIDENTS} element={<Residents />} />
+              <Route path={ROUTES.RESIDENTS_NEW} element={<AddResident />} />
+              <Route path={ROUTES.RESIDENTS_DETAILS} element={<ResidentDetails />} />
+              <Route path={ROUTES.RESIDENTS_EDIT} element={<EditResident />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.visitors} />}>
+              <Route path={ROUTES.VISITORS} element={<Visitors />} />
+              <Route path={ROUTES.VISITORS_NEW} element={<AddVisitor />} />
+              <Route path={ROUTES.VISITORS_DETAILS} element={<VisitorDetails />} />
+              <Route path={ROUTES.VISITORS_EDIT} element={<EditVisitor />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.complaints} />}>
+              <Route path={ROUTES.COMPLAINTS} element={<Complaints />} />
+              <Route path={ROUTES.COMPLAINTS_NEW} element={<AddComplaint />} />
+              <Route path={ROUTES.COMPLAINTS_DETAILS} element={<ComplaintDetails />} />
+              <Route path={ROUTES.COMPLAINTS_EDIT} element={<EditComplaint />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.maintenance} />}>
+              <Route path={ROUTES.MAINTENANCE} element={<MaintenanceBills />} />
+              <Route path={ROUTES.MAINTENANCE_NEW} element={<AddMaintenanceBill />} />
+              <Route path={ROUTES.MAINTENANCE_DETAILS} element={<MaintenanceBillDetails />} />
+              <Route path={ROUTES.MAINTENANCE_EDIT} element={<EditMaintenanceBill />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.notices} />}>
+              <Route path={ROUTES.NOTICE_BOARD} element={<Notices />} />
+              <Route path={ROUTES.NOTICES_NEW} element={<AddNotice />} />
+              <Route path={ROUTES.NOTICES_DETAILS} element={<NoticeDetails />} />
+              <Route path={ROUTES.NOTICES_EDIT} element={<EditNotice />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.parking} />}>
+              <Route path={ROUTES.PARKING} element={<Parking />} />
+              <Route path={ROUTES.PARKING_NEW} element={<AddParking />} />
+              <Route path={ROUTES.PARKING_DETAILS} element={<ParkingDetails />} />
+              <Route path={ROUTES.PARKING_EDIT} element={<EditParking />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.amenities} />}>
+              <Route path={ROUTES.AMENITIES} element={<Amenities />} />
+              <Route path={ROUTES.AMENITIES_NEW} element={<AddAmenity />} />
+              <Route path={ROUTES.AMENITIES_DETAILS} element={<AmenityDetails />} />
+              <Route path={ROUTES.AMENITIES_EDIT} element={<EditAmenity />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.bookings} />}>
+              <Route path={ROUTES.BOOKINGS} element={<Bookings />} />
+              <Route path={ROUTES.BOOKINGS_NEW} element={<AddBooking />} />
+              <Route path={ROUTES.BOOKINGS_DETAILS} element={<BookingDetails />} />
+              <Route path={ROUTES.BOOKINGS_EDIT} element={<EditBooking />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.packages} />}>
+              <Route path={ROUTES.PACKAGE_TRACKING} element={<PackageTracking />} />
+              <Route path={ROUTES.PACKAGE_TRACKING_NEW} element={<AddPackage />} />
+              <Route path={ROUTES.PACKAGE_TRACKING_DETAILS} element={<PackageDetails />} />
+              <Route path={ROUTES.PACKAGE_TRACKING_EDIT} element={<EditPackage />} />
+            </Route>
+
+            <Route element={<RoleRoute roles={MODULE_ACCESS.admin} />}>
+              <Route path={ROUTES.ADMIN_SETTINGS} element={<AdminSettings />} />
+            </Route>
           </Route>
         </Route>
 

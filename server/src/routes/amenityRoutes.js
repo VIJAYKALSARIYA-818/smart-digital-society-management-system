@@ -6,11 +6,13 @@ const {
   listAmenities,
   updateAmenity,
 } = require("../controllers/amenityController");
-const { protect } = require("../middleware/authMiddleware");
+const { MODULE_ACCESS } = require("../constants/roles");
+const { protect, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 router.use(protect);
+router.use(authorize(...MODULE_ACCESS.amenities));
 
 router.get("/", listAmenities);
 router.post("/", createAmenity);

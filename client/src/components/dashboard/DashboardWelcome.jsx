@@ -1,8 +1,21 @@
+import { ROLE_DASHBOARD_COPY, ROLES } from "@/constants/roles";
 import { getUserInitials } from "@/utils/userHelpers";
+
+const ROLE_BADGE_CLASS = {
+  [ROLES.ADMIN]: "bg-amber-400/20 text-amber-50 ring-amber-200/30",
+  [ROLES.GUARD]: "bg-sky-400/20 text-sky-50 ring-sky-200/30",
+  [ROLES.STAFF]: "bg-emerald-400/20 text-emerald-50 ring-emerald-200/30",
+  [ROLES.RESIDENT]: "bg-violet-400/20 text-violet-50 ring-violet-200/30",
+};
 
 const DashboardWelcome = ({ user }) => {
   const initials = getUserInitials(user.fullName);
   const greeting = getGreeting();
+  const roleCopy =
+    ROLE_DASHBOARD_COPY[user.role] ||
+    "Manage your society operations from one smart dashboard.";
+  const badgeClass =
+    ROLE_BADGE_CLASS[user.role] || "bg-white/15 text-white ring-white/15";
 
   return (
     <section className="rounded-xl border border-slate-200 bg-gradient-to-r from-indigo-600 to-indigo-700 p-6 text-white shadow-sm sm:p-8">
@@ -25,9 +38,7 @@ const DashboardWelcome = ({ user }) => {
             <h1 className="text-2xl font-semibold tracking-tight">
               Welcome back, {user.fullName}
             </h1>
-            <p className="mt-1 text-sm text-indigo-100">
-              Manage your society operations from one smart dashboard.
-            </p>
+            <p className="mt-1 text-sm text-indigo-100">{roleCopy}</p>
           </div>
         </div>
 
@@ -36,7 +47,15 @@ const DashboardWelcome = ({ user }) => {
             Account Details
           </p>
           <p className="mt-2 text-sm font-medium">{user.email}</p>
-          <p className="mt-1 inline-flex rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium">
+          {user.flatNumber ? (
+            <p className="mt-1 text-xs text-indigo-100">Flat: {user.flatNumber}</p>
+          ) : null}
+          {user.phone ? (
+            <p className="mt-1 text-xs text-indigo-100">Phone: {user.phone}</p>
+          ) : null}
+          <p
+            className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${badgeClass}`}
+          >
             {user.role}
           </p>
         </div>

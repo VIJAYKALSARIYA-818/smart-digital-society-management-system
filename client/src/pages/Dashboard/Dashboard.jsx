@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  HiOutlineUserGroup,
+  HiOutlineUserPlus,
+  HiOutlineExclamationCircle,
+  HiOutlineBanknotes,
+  HiOutlineTruck,
+  HiOutlineMegaphone,
+  HiOutlineCalendar,
+  HiOutlineCube,
+} from "react-icons/hi2";
 import FormAlert from "@/components/common/FormAlert";
 import ActivityItem from "@/components/dashboard/ActivityItem";
 import AnnouncementCard from "@/components/dashboard/AnnouncementCard";
@@ -10,67 +20,84 @@ import InfoWidget from "@/components/dashboard/InfoWidget";
 import QuickActionCard from "@/components/dashboard/QuickActionCard";
 import SectionHeader from "@/components/dashboard/SectionHeader";
 import Button from "@/components/ui/Button";
+import { ROLES, canAccessModule } from "@/constants/roles";
 import { ROUTES } from "@/constants/routes";
+import useAuth from "@/hooks/useAuth";
 import { fetchDashboardSummary } from "@/services/dashboardService";
 import { getApiError } from "@/utils/apiError";
-import useDashboardUser from "@/hooks/useDashboardUser";
 
 const QUICK_ACTIONS = [
   {
     id: "add-resident",
     title: "Add Resident",
     description: "Register a new resident in the society",
-    icon: "👤",
+    icon: HiOutlineUserGroup,
     route: ROUTES.RESIDENTS_NEW,
+    module: "residents",
+    roles: [ROLES.ADMIN],
   },
   {
     id: "add-visitor",
     title: "Add Visitor",
     description: "Log a new visitor entry",
-    icon: "🚶",
+    icon: HiOutlineUserPlus,
     route: ROUTES.VISITORS_NEW,
+    module: "visitors",
+    roles: [ROLES.ADMIN, ROLES.GUARD],
   },
   {
     id: "add-complaint",
     title: "Add Complaint",
     description: "Record a new complaint or issue",
-    icon: "📝",
+    icon: HiOutlineExclamationCircle,
     route: ROUTES.COMPLAINTS_NEW,
+    module: "complaints",
+    roles: [ROLES.ADMIN, ROLES.STAFF, ROLES.RESIDENT],
   },
   {
     id: "add-maintenance",
     title: "Add Maintenance Bill",
     description: "Create a new maintenance bill",
-    icon: "💰",
+    icon: HiOutlineBanknotes,
     route: ROUTES.MAINTENANCE_NEW,
+    module: "maintenance",
+    roles: [ROLES.ADMIN, ROLES.STAFF],
   },
   {
     id: "add-parking",
     title: "Add Parking Slot",
     description: "Allocate a new parking slot",
-    icon: "🚗",
+    icon: HiOutlineTruck,
     route: ROUTES.PARKING_NEW,
+    module: "parking",
+    roles: [ROLES.ADMIN, ROLES.GUARD],
   },
   {
     id: "add-notice",
     title: "Add Notice",
     description: "Post a new notice or announcement",
-    icon: "📢",
+    icon: HiOutlineMegaphone,
     route: ROUTES.NOTICES_NEW,
+    module: "notices",
+    roles: [ROLES.ADMIN, ROLES.STAFF],
   },
   {
     id: "add-booking",
     title: "Add Booking",
     description: "Create a new amenity booking",
-    icon: "📅",
+    icon: HiOutlineCalendar,
     route: ROUTES.BOOKINGS_NEW,
+    module: "bookings",
+    roles: [ROLES.ADMIN, ROLES.RESIDENT],
   },
   {
     id: "add-package",
     title: "Add Package",
     description: "Register a new package delivery",
-    icon: "📦",
+    icon: HiOutlineCube,
     route: ROUTES.PACKAGE_TRACKING_NEW,
+    module: "packages",
+    roles: [ROLES.ADMIN, ROLES.GUARD],
   },
 ];
 
@@ -80,73 +107,89 @@ const DASHBOARD_CARDS = [
     title: "Total Residents",
     value: 0,
     description: "Active residents in society",
-    icon: "👥",
+    icon: HiOutlineUserGroup,
     color: "blue",
     trend: "+0",
+    module: "residents",
   },
   {
     id: "visitors",
     title: "Total Visitors",
     value: 0,
     description: "Registered visitors",
-    icon: "🚶",
+    icon: HiOutlineUserPlus,
     color: "green",
     trend: "+0",
+    module: "visitors",
   },
   {
     id: "complaints",
     title: "Open Complaints",
     value: 0,
     description: "Pending and in-progress issues",
-    icon: "📝",
+    icon: HiOutlineExclamationCircle,
     color: "yellow",
     trend: "+0",
+    module: "complaints",
   },
   {
     id: "maintenance",
     title: "Pending Bills",
     value: 0,
     description: "Unpaid maintenance bills",
-    icon: "💰",
+    icon: HiOutlineBanknotes,
     color: "red",
     trend: "+0",
+    module: "maintenance",
   },
   {
     id: "parking",
     title: "Active Parking",
     value: 0,
     description: "Allocated parking slots",
-    icon: "🚗",
+    icon: HiOutlineTruck,
     color: "purple",
     trend: "+0",
+    module: "parking",
   },
   {
     id: "amenities",
     title: "Total Amenities",
     value: 0,
     description: "Available facilities",
-    icon: "🏢",
+    icon: HiOutlineCalendar,
     color: "indigo",
     trend: "+0",
+    module: "amenities",
   },
   {
     id: "bookings",
     title: "Upcoming Bookings",
     value: 0,
     description: "Confirmed amenity bookings",
-    icon: "📅",
+    icon: HiOutlineCalendar,
     color: "emerald",
     trend: "+0",
+    module: "bookings",
   },
   {
     id: "packages",
     title: "Expected Packages",
     value: 0,
     description: "Packages awaiting delivery",
-    icon: "📦",
+    icon: HiOutlineCube,
     color: "orange",
     trend: "+0",
+    module: "packages",
   },
+];
+
+const ANALYTICS_PANELS = [
+  { key: "complaintsByStatus", title: "Complaints by Status", module: "complaints" },
+  { key: "maintenanceBillsByStatus", title: "Maintenance Bills", module: "maintenance" },
+  { key: "parkingByStatus", title: "Parking Status", module: "parking" },
+  { key: "packageDeliveryStatus", title: "Package Delivery Status", module: "packages" },
+  { key: "amenityBookingStatus", title: "Amenity Booking Status", module: "bookings" },
 ];
 
 const ANNOUNCEMENTS = [
@@ -175,7 +218,7 @@ const ANNOUNCEMENTS = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, isLoading: userLoading, error: userError, refetch } = useDashboardUser();
+  const { user, isLoading: authLoading } = useAuth();
   const [dashboardData, setDashboardData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -198,23 +241,24 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (!user?.id) return;
     loadDashboardData();
-  }, []);
+  }, [user?.id]);
 
   const handleQuickAction = (route) => {
     navigate(route);
   };
 
-  if (userLoading || isLoading) {
+  if (authLoading || isLoading) {
     return <DashboardSkeleton />;
   }
 
-  if (userError || error) {
+  if (error) {
     return (
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <FormAlert message={(userError || error).message} errors={(userError || error).errors} />
+        <FormAlert message={error.message} errors={error.errors} />
         <div className="mt-4">
-          <Button type="button" variant="outline" onClick={() => { refetch(); loadDashboardData(); }}>
+          <Button type="button" variant="outline" onClick={loadDashboardData}>
             Retry loading dashboard
           </Button>
         </div>
@@ -230,7 +274,11 @@ const Dashboard = () => {
     );
   }
 
-  const dashboardCards = DASHBOARD_CARDS.map((card) => {
+  const role = user.role;
+
+  const dashboardCards = DASHBOARD_CARDS.filter((card) =>
+    canAccessModule(role, card.module)
+  ).map((card) => {
     let value = 0;
     try {
       switch (card.id) {
@@ -265,8 +313,28 @@ const Dashboard = () => {
       console.error(`Error calculating card value for ${card.id}:`, err);
       value = 0;
     }
-    return { ...card, value };
+
+    const colorMap = {
+      blue: "bg-blue-50 text-blue-600",
+      green: "bg-green-50 text-green-600",
+      yellow: "bg-yellow-50 text-yellow-600",
+      red: "bg-red-50 text-red-600",
+      purple: "bg-purple-50 text-purple-600",
+      indigo: "bg-indigo-50 text-indigo-600",
+      emerald: "bg-emerald-50 text-emerald-600",
+      orange: "bg-orange-50 text-orange-600",
+    };
+
+    return { ...card, value, accent: colorMap[card.color] || colorMap.blue };
   });
+
+  const quickActions = QUICK_ACTIONS.filter((action) =>
+    action.roles.includes(role)
+  );
+
+  const analyticsPanels = ANALYTICS_PANELS.filter((panel) =>
+    canAccessModule(role, panel.module)
+  );
 
   const analytics = dashboardData?.analytics || {};
   const recentActivities = Array.isArray(dashboardData?.recentActivities) ? dashboardData.recentActivities : [];
@@ -314,7 +382,7 @@ const Dashboard = () => {
           title="Overview"
           description="Key society metrics at a glance."
         />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
           {dashboardCards.map((stat) => (
             <DashboardCard key={stat.id} {...stat} />
           ))}
@@ -326,21 +394,27 @@ const Dashboard = () => {
           title="Quick Actions"
           description="Common tasks to manage daily society operations."
         />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {QUICK_ACTIONS.map((action) => (
-            <QuickActionCard
-              key={action.id}
-              title={action.title}
-              description={action.description}
-              icon={action.icon}
-              onClick={() => handleQuickAction(action.route)}
-            />
-          ))}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
+          {quickActions.length === 0 ? (
+            <p className="text-sm text-slate-500 sm:col-span-2 lg:col-span-4">
+              No quick actions available for your role.
+            </p>
+          ) : (
+            quickActions.map((action) => (
+              <QuickActionCard
+                key={action.id}
+                title={action.title}
+                description={action.description}
+                icon={action.icon}
+                onClick={() => handleQuickAction(action.route)}
+              />
+            ))
+          )}
         </div>
       </section>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:grid-cols-3">
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2 xl:col-span-2">
           <SectionHeader
             title="Recent Activity"
             description="Latest updates across society modules."
@@ -387,40 +461,17 @@ const Dashboard = () => {
           description="Detailed statistics across society modules."
         />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-slate-900">Complaints by Status</h3>
-            <div className="mt-4">
-              {formatAnalyticsDisplay(analytics.complaintsByStatus, "Complaints")}
+          {analyticsPanels.map((panel) => (
+            <div
+              key={panel.key}
+              className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+            >
+              <h3 className="text-sm font-semibold text-slate-900">{panel.title}</h3>
+              <div className="mt-4">
+                {formatAnalyticsDisplay(analytics[panel.key], panel.title)}
+              </div>
             </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-slate-900">Maintenance Bills</h3>
-            <div className="mt-4">
-              {formatAnalyticsDisplay(analytics.maintenanceBillsByStatus, "Maintenance")}
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-slate-900">Parking Status</h3>
-            <div className="mt-4">
-              {formatAnalyticsDisplay(analytics.parkingByStatus, "Parking")}
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-slate-900">Package Delivery Status</h3>
-            <div className="mt-4">
-              {formatAnalyticsDisplay(analytics.packageDeliveryStatus, "Packages")}
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-slate-900">Amenity Booking Status</h3>
-            <div className="mt-4">
-              {formatAnalyticsDisplay(analytics.amenityBookingStatus, "Bookings")}
-            </div>
-          </div>
+          ))}
         </div>
       </section>
     </div>

@@ -8,11 +8,13 @@ const {
   listVisitors,
   updateVisitor,
 } = require("../controllers/visitorController");
-const { protect } = require("../middleware/authMiddleware");
+const { MODULE_ACCESS } = require("../constants/roles");
+const { protect, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 router.use(protect);
+router.use(authorize(...MODULE_ACCESS.visitors));
 
 router.get("/", listVisitors);
 router.post("/", createVisitor);

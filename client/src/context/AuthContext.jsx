@@ -58,6 +58,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = useCallback(
     async (credentials) => {
+      // Clear any previous session so role/user details never stick across accounts
+      removeToken();
+      setUser(null);
+
       const { data } = await loginUser(credentials);
       setToken(data.data.token);
       setUser(data.data.user);
@@ -69,6 +73,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = useCallback(
     async (userData) => {
+      removeToken();
+      setUser(null);
+
       const { data } = await registerUser(userData);
       setToken(data.data.token);
       setUser(data.data.user);
@@ -94,6 +101,7 @@ export const AuthProvider = ({ children }) => {
   const value = useMemo(
     () => ({
       user,
+      setUser,
       isLoading,
       isAuthenticated: Boolean(user),
       login,
@@ -101,7 +109,7 @@ export const AuthProvider = ({ children }) => {
       logout,
       getApiError,
     }),
-    [user, isLoading, login, register, logout],
+    [user, setUser, isLoading, login, register, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

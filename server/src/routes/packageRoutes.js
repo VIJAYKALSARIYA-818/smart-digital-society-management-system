@@ -6,11 +6,13 @@ const {
   listPackages,
   updatePackage,
 } = require("../controllers/packageController");
-const { protect } = require("../middleware/authMiddleware");
+const { MODULE_ACCESS } = require("../constants/roles");
+const { protect, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 router.use(protect);
+router.use(authorize(...MODULE_ACCESS.packages));
 
 router.get("/", listPackages);
 router.post("/", createPackage);

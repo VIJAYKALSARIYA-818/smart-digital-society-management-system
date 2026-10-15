@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import {
   HiOutlineBuildingOffice2,
+  HiOutlineCalendar,
   HiOutlineChartBarSquare,
   HiOutlineClipboardDocumentList,
   HiOutlineCog6Tooth,
@@ -14,6 +15,7 @@ import {
   HiOutlineXMark,
 } from "react-icons/hi2";
 import { SIDEBAR_NAV_ITEMS } from "@/constants/navigation";
+import { canAccessModule } from "@/constants/roles";
 import useAuth from "@/hooks/useAuth";
 
 const NAV_ICONS = {
@@ -25,9 +27,9 @@ const NAV_ICONS = {
   Parking: HiOutlineTruck,
   "Package Tracking": HiOutlineCube,
   Amenities: HiOutlineSparkles,
+  Bookings: HiOutlineCalendar,
   "Notice Board": HiOutlineClipboardDocumentList,
   "Admin Settings": HiOutlineCog6Tooth,
-  Settings: HiOutlineCog6Tooth,
 };
 
 const appName =
@@ -43,10 +45,9 @@ const navLinkClass = ({ isActive }) =>
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { user } = useAuth();
-  const isAdmin = user?.role === "Society Admin";
 
-  const filteredNavItems = SIDEBAR_NAV_ITEMS.filter(
-    (item) => !item.adminOnly || isAdmin
+  const filteredNavItems = SIDEBAR_NAV_ITEMS.filter((item) =>
+    canAccessModule(user?.role, item.module)
   );
 
   return (

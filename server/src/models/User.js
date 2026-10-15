@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const { USER_ROLES } = require("../validators/authValidator");
 
 const userSchema = new mongoose.Schema(
@@ -20,17 +21,17 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: [true, "Phone number is required"],
       trim: true,
     },
     flatNumber: {
       type: String,
-      required: [true, "Flat number is required"],
       trim: true,
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: function() {
+        return this.authProvider === 'local';
+      },
       minlength: [8, "Password must be at least 8 characters"],
       select: false,
     },
@@ -47,6 +48,22 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    authProvider: {
+      type: String,
+      enum: ['local', 'google'],
+      default: 'local',
+    },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpire: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
@@ -54,7 +71,7 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function hashPassword() {
-  if (!this.isModified("password")) {
+  if (!this.isModified("password") || !this.password) {
     return;
   }
 
@@ -64,6 +81,19 @@ userSchema.pre("save", async function hashPassword() {
 
 userSchema.methods.matchPassword = async function matchPassword(enteredPassword) {
   return bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.getResetPasswordToken = function getResetPasswordToken() {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutes
+
+  return resetToken;
 };
 
 const User = mongoose.model("User", userSchema);

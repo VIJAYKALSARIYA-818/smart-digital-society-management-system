@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const session = require("express-session");
 const authRoutes = require("./routes/authRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const residentRoutes = require("./routes/residentRoutes");
@@ -15,7 +16,30 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 
+// Load passport only if Google OAuth is configured
+let passport;
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  passport = require("./config/passport");
+}
+
 const app = express();
+
+// Session configuration for OAuth
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'smart_society_session_secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Initialize Passport only if Google OAuth is configured
+if (passport) {
+  app.use(passport.initialize());
+  app.use(passport.session());
+}
 
 app.use(cors());
 app.use(express.json());
@@ -33,7 +57,7 @@ app.use("/api/residents", residentRoutes);
 app.use("/api/parking", parkingRoutes);
 app.use("/api/visitors", visitorRoutes);
 app.use("/api/complaints", complaintRoutes);
-app.use("/api/maintenance", maintenanceRoutes);
+app.use("/api/maintenance-bills", maintenanceRoutes);
 app.use("/api/notices", noticeRoutes);
 app.use("/api/amenities", amenityRoutes);
 app.use("/api/bookings", bookingRoutes);
